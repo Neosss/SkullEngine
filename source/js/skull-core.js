@@ -20,6 +20,7 @@ function SkullEngine(fps, anchura, altura)
     this.helloWorld;
     this.anchura = anchura;
     this.altura = altura;
+    this.helloWorldText;
     
     this.update = function()
     {
@@ -53,15 +54,21 @@ function SkullEngine(fps, anchura, altura)
         this.bufferctx = this.buffer.getContext('2d');
 
         //Cargar Recursos
+        this.helloWorldText = "Hello World!";
+        self.bufferctx.font = '100px Arial';
+        
+        
         this.helloWorld = new Image();
         this.helloWorld.src = "images/fondo.jpg";
         this.helloWorld.posX = this.canvas.width * 0.5;
         this.helloWorld.onload = function()
         {
             self.bufferctx.drawImage(self.helloWorld, 0, 0);
+            
+            self.bufferctx.fillText(self.helloWorldText, 140, 100);
         };
         
-
+        
 
         //Bucle del Juego
         var anim = function () {
