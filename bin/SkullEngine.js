@@ -123,6 +123,62 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     };
 }
 
+function SkullText(text, fontSize, positionX, positionY)
+{
+    this.text = text || "";
+    this.positionX = positionX || 0;
+    this.postiionY = positionY || 0;
+    this.fontSize = fontSize || 1;
+    this.fontColor = 'rgb(0, 0, 0)';
+    
+    this.setFont = function(context)
+    {
+        context.bufferctx.font = this.fontSize + 'px Arial';
+        context.bufferctx.fillStyle = this.fontColor;
+    };
+    
+    this.setPositionX = function(posX)
+    {
+        this.positionX = posX;
+    };
+    
+    this.setPositionY = function(posY)
+    {
+        this.positionY = posY;
+    };
+    
+    this.setPosition = function(posX, posY)
+    {
+        this.positionX = posX;
+        this.positionY = posY;
+    };
+    
+    this.setFontSize = function(fontSize)
+    {
+        this.fontSize = fontSize;
+    };
+    
+    this.getText = function()
+    {
+        return this.text;
+    };
+    
+    this.getPositionX = function()
+    {
+        return this.positionX;
+    };
+    
+    this.getPositionY = function()
+    {
+        return this.positionY;
+    };
+    
+    this.setColor = function(r, g, b)
+    {
+        this.fontColor = 'rgb(' + r + ',' + g + ',' + b + ')';
+    };
+}
+
 //Funciones del Engine
 function SkullSound(source, volume, loop)
 {
@@ -188,6 +244,11 @@ function SkullEngine(fps, anchura, altura)
             {
                 this.bufferctx.drawImage(this.children[i].getSprite(), this.children[i].getPositionX(), this.children[i].getPositionY(), this.children[i].getScaleX(), this.children[i].getScaleY());
             }
+            else if(this.children[i] instanceof SkullText)
+            {
+                this.children[i].setFont(this);
+                this.bufferctx.fillText(this.children[i].getText(), this.children[i].getPositionX(), this.children[i].getPositionY());
+            }
         }
         
         this.ctx.drawImage(this.buffer, 0, 0);
@@ -202,6 +263,12 @@ function SkullEngine(fps, anchura, altura)
     this.addChild = function(child)
     {
         this.children.push(child);
+    };
+    
+    this.removeChild = function(child)
+    {
+        var index = this.children.indexOf(child);
+        this.children.splice(index, 1);
     };
     
     this.init = function()

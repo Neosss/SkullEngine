@@ -39,6 +39,11 @@ function SkullEngine(fps, anchura, altura)
             {
                 this.bufferctx.drawImage(this.children[i].getSprite(), this.children[i].getPositionX(), this.children[i].getPositionY(), this.children[i].getScaleX(), this.children[i].getScaleY());
             }
+            else if(this.children[i] instanceof SkullText)
+            {
+                this.children[i].setFont(this);
+                this.bufferctx.fillText(this.children[i].getText(), this.children[i].getPositionX(), this.children[i].getPositionY());
+            }
         }
         
         this.ctx.drawImage(this.buffer, 0, 0);
@@ -53,6 +58,12 @@ function SkullEngine(fps, anchura, altura)
     this.addChild = function(child)
     {
         this.children.push(child);
+    };
+    
+    this.removeChild = function(child)
+    {
+        var index = this.children.indexOf(child);
+        this.children.splice(index, 1);
     };
     
     this.init = function()
