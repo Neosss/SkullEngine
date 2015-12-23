@@ -22,12 +22,25 @@ function SkullEngine(fps, anchura, altura)
     this.altura = altura;
     this.helloWorldText;
     
+    this.children = [];
+    
     this.update = function()
     {
+        
     };
     
     this.render = function()
     {
+        var self = this;
+        
+        for(var i = 0; i < this.children.length; i++)
+        {
+            if(this.children[i] instanceof SkullSprite)
+            {
+                this.bufferctx.drawImage(this.children[i].getSprite(), this.children[i].getPositionX(), this.children[i].getPositionY(), this.children[i].getScaleX(), this.children[i].getScaleY());
+            }
+        }
+        
         this.ctx.drawImage(this.buffer, 0, 0);
     };
     
@@ -35,6 +48,11 @@ function SkullEngine(fps, anchura, altura)
     {
         this.update();
         this.render();
+    };
+    
+    this.addChild = function(child)
+    {
+        this.children.push(child);
     };
     
     this.init = function()
@@ -55,20 +73,7 @@ function SkullEngine(fps, anchura, altura)
 
         //Cargar Recursos
         this.helloWorldText = "Hello World!";
-        self.bufferctx.font = '100px Arial';
-        
-        
-        this.helloWorld = new Image();
-        this.helloWorld.src = "images/fondo.jpg";
-        this.helloWorld.posX = this.canvas.width * 0.5;
-        this.helloWorld.onload = function()
-        {
-            self.bufferctx.drawImage(self.helloWorld, 0, 0);
-            
-            self.bufferctx.fillText(self.helloWorldText, 140, 100);
-        };
-        
-        
+        this.bufferctx.font = '100px Arial';
 
         //Bucle del Juego
         var anim = function () {

@@ -8,8 +8,123 @@ window.requestAnimFrame = (function(){
           };
 })();
 
+function SkullSprite(path, posX, posY, scaleX, scaleY)
+{
+    this.path = path || "";
+    this.positionX = posX || 0;
+    this.positionY = posY || 0;
+    
+    this.sprite = new Image();
+    this.sprite.src = this.path;
+    
+    this.tmpScaleX = scaleX;
+    this.tmpScaleY = scaleY;
+    
+    var self = this;
+    
+    this.sprite.onload = function ()
+    {
+        self.scaleX = self.tmpScaleX || self.sprite.width;
+        self.scaleY = self.tmpScaleY || self.sprite.height;
+    };
+    
+    this.setPositionX = function(posX)
+    {
+        this.positionX = posX;
+    };
+    
+    this.setPositionY = function(posY)
+    {
+        this.positionY = posY;   
+    };
+    
+    this.setPosition = function(posX, posY)
+    {
+        this.positionX = posX;
+        this.positionY = posY;
+    };
+    
+    this.setScaleX = function(scaleX, auto)
+    {
+        var autoScale = auto || false;
+        this.sprite.onload = function()
+        {
+            if(autoScale)
+            {
+                var ruleOfThree = (scaleX*self.sprite.height)/self.sprite.width;
+                self.scaleY = ruleOfThree;
+            }
+            else
+            {
+                self.scaleY = self.sprite.height;
+            }
+            
+            self.scaleX = scaleX;
+        }
+    };
+    
+    this.setScaleY = function(scaleY, auto)
+    {
+        var autoScale = auto || false;
+        this.sprite.onload = function()
+        {
+            if(autoScale)
+            {
+                var ruleOfThree = (scaleY*self.sprite.width)/self.sprite.height;
+                self.scaleX = ruleOfThree;
+            }
+            else
+            {
+                self.scaleX = self.sprite.width;
+            }
+            
+            self.scaleY = scaleY;
+        }
+    };
+    
+    this.setScale = function(scaleX, scaleY)
+    {
+        this.sprite.onload = function()
+        {
+            self.scaleX = scaleX;
+            self.scaleY = scaleY;
+        }
+    };
+    
+    this.getPath = function()
+    {
+        return this.path;
+    };
+    
+    this.getPositionX = function()
+    {
+        return this.positionX;
+    };
+    
+    this.getPositionY = function()
+    {
+        return this.positionY;
+    };
+    
+    this.getSprite = function()
+    {
+        return this.sprite;
+    };
+    
+    this.getScaleX = function()
+    {
+        return this.scaleX;
+    };
+    
+    this.getScaleY = function()
+    {
+        return this.scaleY;
+        
+    };
+}
+
 //Funciones del Engine
-function reproductor(source, volume, loop)
+function SkullSound(source, volume, loop)
 {
     this.source=source;
     this.volume=volume;
@@ -42,6 +157,7 @@ function reproductor(source, volume, loop)
         this.loop=loop;
     }
 }
+
 function SkullEngine(fps, anchura, altura)
 {
     this.canvas;
@@ -55,12 +171,25 @@ function SkullEngine(fps, anchura, altura)
     this.altura = altura;
     this.helloWorldText;
     
+    this.children = [];
+    
     this.update = function()
     {
+        
     };
     
     this.render = function()
     {
+        var self = this;
+        
+        for(var i = 0; i < this.children.length; i++)
+        {
+            if(this.children[i] instanceof SkullSprite)
+            {
+                this.bufferctx.drawImage(this.children[i].getSprite(), this.children[i].getPositionX(), this.children[i].getPositionY(), this.children[i].getScaleX(), this.children[i].getScaleY());
+            }
+        }
+        
         this.ctx.drawImage(this.buffer, 0, 0);
     };
     
@@ -68,6 +197,11 @@ function SkullEngine(fps, anchura, altura)
     {
         this.update();
         this.render();
+    };
+    
+    this.addChild = function(child)
+    {
+        this.children.push(child);
     };
     
     this.init = function()
@@ -88,20 +222,7 @@ function SkullEngine(fps, anchura, altura)
 
         //Cargar Recursos
         this.helloWorldText = "Hello World!";
-        self.bufferctx.font = '100px Arial';
-        
-        
-        this.helloWorld = new Image();
-        this.helloWorld.src = "images/fondo.jpg";
-        this.helloWorld.posX = this.canvas.width * 0.5;
-        this.helloWorld.onload = function()
-        {
-            self.bufferctx.drawImage(self.helloWorld, 0, 0);
-            
-            self.bufferctx.fillText(self.helloWorldText, 140, 100);
-        };
-        
-        
+        this.bufferctx.font = '100px Arial';
 
         //Bucle del Juego
         var anim = function () {
