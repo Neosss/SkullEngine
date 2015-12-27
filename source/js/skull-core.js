@@ -1,14 +1,3 @@
-//Pantalla
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          function( callback ){
-            window.setTimeout(callback, 1000 / 60);
-          };
-})();
-
-//Funciones del Engine
 function SkullEngine(fps, anchura, altura)
 {
     this.canvas;
@@ -23,6 +12,8 @@ function SkullEngine(fps, anchura, altura)
     this.helloWorldText;
     
     this.children = [];
+    
+    this.currentScene;
     
     this.update = function()
     {
@@ -45,6 +36,22 @@ function SkullEngine(fps, anchura, altura)
                 this.bufferctx.fillText(this.children[i].getText(), this.children[i].getPositionX(), this.children[i].getPositionY());
             }
         }
+        if(this.currentScene != undefined)
+        {
+        
+            for(var i = 0; i < this.currentScene.children.length; i++)
+            {
+                if(this.currentScene.children[i] instanceof SkullSprite)
+                {
+                    this.bufferctx.drawImage(this.currentScene.children[i].getSprite(), this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY(), this.currentScene.children[i].getScaleX(), this.currentScene.children[i].getScaleY());
+                }
+                else if(this.currentScene.children[i] instanceof SkullText)
+                {
+                    this.currentScene.children[i].setFont(this);
+                    this.bufferctx.fillText(this.currentScene.children[i].getText(), this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY());
+                }
+            }
+        }
         
         this.ctx.drawImage(this.buffer, 0, 0);
     };
@@ -64,6 +71,11 @@ function SkullEngine(fps, anchura, altura)
     {
         var index = this.children.indexOf(child);
         this.children.splice(index, 1);
+    };
+    
+    this.setScene = function(scene)
+    {
+        this.currentScene = scene;
     };
     
     this.init = function()

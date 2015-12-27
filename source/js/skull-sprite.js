@@ -10,6 +10,8 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     this.tmpScaleX = scaleX;
     this.tmpScaleY = scaleY;
     
+    this.enabled = true;
+    
     var self = this;
     
     this.sprite.onload = function ()
