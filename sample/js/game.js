@@ -8,19 +8,8 @@ mySound.init(100,true);
 
 game.init();
 
-var background = new SkullSprite("images/fondo.jpg", 0, 0);
+var background = new SkullSprite("images/fondo.jpg");
 background.setScaleY(600, true);
+background.setAnchorPoint(0.5, 0.5);
+background.setPosition(400, 300);
 game.addChild(background);
-
-var iroha = new SkullCharacter("Iroha");
-iroha.addStateSprite("normal", "images/character2.png");
-iroha.addStateSprite("angry", "images/character3.png");
-iroha.addStateSprite("happy", "images/character.png");
-iroha.enabled = true;
-iroha.setState("angry");
-
-var tutorialScene = new SkullScene();
-tutorialScene.addCharacter(iroha);
-tutorialScene.startScene();
-
-game.setScene(tutorialScene);

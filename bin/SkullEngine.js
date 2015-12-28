@@ -8,6 +8,94 @@ window.requestAnimFrame = (function(){
           };
 })();
 
+//ENG
+//Helper functions for SkullEngine
+//SPA
+//Funciones de ayuda para SkullEngine
+
+//ENG
+//clamps the value x to the range [a,b]
+//function returns the clamped value
+//SPA
+//limita el valor x a un rango entre [a,b]
+//la funcion regresa el valor limitado
+function clamp(x, a, b)
+{
+    if(x < a)
+    {
+        return a;
+    }
+    else if(x > b)
+    {
+        return b;
+    }
+    
+    return x;
+}
+
+//ENG
+//Helper functions for SkullEngine
+//SPA
+//Funciones de ayuda para SkullEngine
+
+//ENG
+//clamps the value x to the range [a,b]
+//function returns the clamped value
+//SPA
+//limita el valor x a un rango entre [a,b]
+//la funcion regresa el valor limitado
+function clamp(x, a, b)
+{
+    if(x < a)
+    {
+        return a;
+    }
+    else if(x > b)
+    {
+        return b;
+    }
+    
+    return x;
+}
+
+//returns a predefined position commonly used in visual novels
+//             Screen
+//*------------------------------*
+//|       |       |       |      |
+//|       |       |       |      |
+//|       |       |       |      |
+//|       |       |       |      |
+//|       |       |       |      |
+//|       |       |       |      |
+//|       |       |       |      |
+//|       |       |       |      |
+//|       |       |       |      |
+//*------------------------------*
+//        |       |       |
+//       left   center   right
+
+function alignX(presetPos, screenWidth)
+{
+    switch(presetPos)
+    {
+        //left
+        case 0:
+            return (screenWidth / 4);
+            break;
+        //center
+        case 1:
+            return (screenWidth / 4) * 2;
+            break;
+        //right
+        case 2:
+            return (screenWidth / 4) * 3;
+            break;
+        default:
+            return 0;
+            break;
+    }
+}
+
 function SkullSprite(path, posX, posY, scaleX, scaleY)
 {
     this.path = path || "";
@@ -15,17 +103,74 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     this.positionY = posY || 0;
     
     this.sprite = new Image();
-    this.sprite.src = this.path;
+    
+    this.anchorPointX = 0;
+    this.anchorPointY = 0;
+    
+    this.scaleX;
+    this.scaleY;
     
     this.tmpScaleX = scaleX;
     this.tmpScaleY = scaleY;
+    
+    this.width = 0;
+    this.height = 0;
+    
+    this.rotateAngle = 0;
+    
+    this.enabled = true;
     
     var self = this;
     
     this.sprite.onload = function ()
     {
-        self.scaleX = self.tmpScaleX || self.sprite.width;
-        self.scaleY = self.tmpScaleY || self.sprite.height;
+        
+    };
+    
+    this.sprite.src = this.path;
+    
+    this.setAnchorPoint = function(x, y)
+    {
+        if(x != undefined)
+        {
+            this.anchorPointX = clamp(x, 0.0, 1.0);
+        }
+        if(y != undefined)
+        {
+            this.anchorPointY = clamp(y, 0.0, 1.0);
+        }
+    };
+    
+    this.setRotation = function(angle)
+    {
+        if(angle != undefined)
+        {
+            this.rotateAngle = angle;
+        }
+    };
+    
+    this.getTranslateX = function()
+    {
+        if(this.scaleX != undefined)
+        {
+            return (this.anchorPointX * this.scaleX);
+        }
+        else
+        {
+            return (this.anchorPointX * this.sprite.width);
+        }
+    };
+    
+    this.getTranslateY = function()
+    {
+        if(this.scaleY != undefined)
+        {
+            return (this.anchorPointY * this.scaleY);
+        }
+        else
+        {
+            return (this.anchorPointY * this.sprite.height);
+        }
     };
     
     this.setPositionX = function(posX)
@@ -113,13 +258,26 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     
     this.getScaleX = function()
     {
-        return this.scaleX;
+        if(this.scaleX != undefined)
+        {
+            return this.scaleX;
+        }
+        else
+        {
+            return this.sprite.width;
+        }
     };
     
     this.getScaleY = function()
     {
-        return this.scaleY;
-        
+        if(this.scaleX != undefined)
+        {
+            return this.scaleY;
+        }
+        else
+        {
+            return this.sprite.height;
+        }
     };
 }
 
@@ -217,6 +375,10 @@ function SkullSound(source, volume, loop)
 function SkullCharacter(name)
 {
     this.name = name;
+    //default text color Black
+    this.colorR = 0;
+    this.colorG = 0;
+    this.colorB = 0;
     
     this.states = [];
     this.paths = [];
@@ -225,6 +387,18 @@ function SkullCharacter(name)
     this.enabled = false;
     //current state index
     this.currentState;
+    
+    this.generalProperties = 
+    {
+        positionX : 0,
+        positionY : 0,
+        scaleX : undefined,
+        scaleY : undefined,
+        scaleAxisAuto : true,
+        anchorPointX : 0.5,
+        anchorPointY : 1.0,
+        rotation : 0
+    };
     
     this.addStateSprite = function(state, path)
     {
@@ -251,6 +425,13 @@ function SkullCharacter(name)
     this.setEnable = function(conditional)
     {
         this.enabled = conditional || false;
+    };
+    
+    this.setTextColor = function(r, g, b)
+    {
+        this.colorR = r;
+        this.colorG = g;
+        this.colorB = b;
     };
     
     this.setConfiguration = function()
@@ -295,6 +476,20 @@ function SkullScene()
             for(var j = 0; j < this.characters[i].paths.length; j++)
             {
                 var sprite = new SkullSprite(this.characters[i].paths[j]);
+                sprite.enabled = false;
+                sprite.setPosition(this.characters[i].generalProperties.positionX, this.characters[i].generalProperties.positionY);
+                if(this.characters[i].generalProperties.scaleX != undefined)
+                {
+                    sprite.setScaleX(this.characters[i].generalProperties.scaleX, this.characters[i].generalProperties.scaleAxisAuto);
+                }
+                if(this.characters[i].generalProperties.scaleY != undefined)
+                {
+                    sprite.setScaleY(this.characters[i].generalProperties.scaleX, this.characters[i].generalProperties.scaleAxisAuto);
+                }
+                sprite.setRotation(this.characters[i].generalProperties.rotation);
+                
+                sprite.setAnchorPoint(this.characters[i].generalProperties.anchorPointX, this.characters[i].generalProperties.anchorPointY);
+                
                 if(this.characters[i].enabled)
                 {
                     if(this.characters[i].currentState == this.characters[i].states[j])
@@ -317,18 +512,7 @@ function SkullScene()
     };
 }
 
-//Pantalla
-window.requestAnimFrame = (function(){
-  return  window.requestAnimationFrame       ||
-          window.webkitRequestAnimationFrame ||
-          window.mozRequestAnimationFrame    ||
-          function( callback ){
-            window.setTimeout(callback, 1000 / 60);
-          };
-})();
-
-//Funciones del Engine
-function SkullEngine(fps, anchura, altura)
+function SkullEngine(fps, width, height)
 {
     this.canvas;
     this.ctx;
@@ -337,9 +521,13 @@ function SkullEngine(fps, anchura, altura)
     this.gameloop;
     this.fps = fps;
     this.helloWorld;
-    this.anchura = anchura;
-    this.altura = altura;
+    this.width = width;
+    this.height = height;
     this.helloWorldText;
+    
+    this.left = 0;
+    this.center = 1;
+    this.right = 2;
     
     this.children = [];
     
@@ -354,11 +542,17 @@ function SkullEngine(fps, anchura, altura)
     {
         var self = this;
         
+        this.bufferctx.clearRect(0, 0, this.width, this.height);
+        
         for(var i = 0; i < this.children.length; i++)
         {
             if(this.children[i] instanceof SkullSprite)
             {
-                this.bufferctx.drawImage(this.children[i].getSprite(), this.children[i].getPositionX(), this.children[i].getPositionY(), this.children[i].getScaleX(), this.children[i].getScaleY());
+                this.bufferctx.translate(this.children[i].getPositionX(), this.children[i].getPositionY());
+                this.bufferctx.rotate(this.children[i].rotateAngle * (Math.PI/180));
+                this.bufferctx.drawImage(this.children[i].getSprite(), -this.children[i].getTranslateX(), -this.children[i].getTranslateY(), this.children[i].getScaleX(), this.children[i].getScaleY());
+                this.bufferctx.rotate(-this.children[i].rotateAngle * (Math.PI/180));
+                this.bufferctx.translate(-this.children[i].getPositionX(), -this.children[i].getPositionY());
             }
             else if(this.children[i] instanceof SkullText)
             {
@@ -373,7 +567,11 @@ function SkullEngine(fps, anchura, altura)
             {
                 if(this.currentScene.children[i] instanceof SkullSprite)
                 {
-                    this.bufferctx.drawImage(this.currentScene.children[i].getSprite(), this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY(), this.currentScene.children[i].getScaleX(), this.currentScene.children[i].getScaleY());
+                    this.bufferctx.translate(this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY());
+                    this.bufferctx.rotate(this.currentScene.children[i].rotateAngle * (Math.PI/180));
+                    this.bufferctx.drawImage(this.currentScene.children[i].getSprite(), -this.currentScene.children[i].getTranslateX(), -this.currentScene.children[i].getTranslateY(), this.currentScene.children[i].getScaleX(), this.currentScene.children[i].getScaleY());
+                    this.bufferctx.rotate(-this.currentScene.children[i].rotateAngle * (Math.PI/180));
+                    this.bufferctx.translate(-this.currentScene.children[i].getPositionX(), -this.currentScene.children[i].getPositionY());
                 }
                 else if(this.currentScene.children[i] instanceof SkullText)
                 {
@@ -412,8 +610,8 @@ function SkullEngine(fps, anchura, altura)
     {
         var self = this;
         //Dimensiones de la pantalla
-        this.anchura = document.getElementById("canvas").width = anchura;
-        this.altura = document.getElementById("canvas").height = altura;
+        document.getElementById("canvas").width = this.width;
+        document.getElementById("canvas").height = this.height;
 
         this.canvas = document.getElementById("canvas");
         this.ctx = this.canvas.getContext("2d");

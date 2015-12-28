@@ -1,4 +1,13 @@
-function SkullEngine(fps, anchura, altura)
+window.requestAnimFrame = (function(){
+  return  window.requestAnimationFrame       ||
+          window.webkitRequestAnimationFrame ||
+          window.mozRequestAnimationFrame    ||
+          function( callback ){
+            window.setTimeout(callback, 1000 / 60);
+          };
+})();
+
+function SkullEngine(fps, width, height)
 {
     this.canvas;
     this.ctx;
@@ -7,9 +16,13 @@ function SkullEngine(fps, anchura, altura)
     this.gameloop;
     this.fps = fps;
     this.helloWorld;
-    this.anchura = anchura;
-    this.altura = altura;
+    this.width = width;
+    this.height = height;
     this.helloWorldText;
+    
+    this.left = 0;
+    this.center = 1;
+    this.right = 2;
     
     this.children = [];
     
@@ -24,11 +37,17 @@ function SkullEngine(fps, anchura, altura)
     {
         var self = this;
         
+        this.bufferctx.clearRect(0, 0, this.width, this.height);
+        
         for(var i = 0; i < this.children.length; i++)
         {
             if(this.children[i] instanceof SkullSprite)
             {
-                this.bufferctx.drawImage(this.children[i].getSprite(), this.children[i].getPositionX(), this.children[i].getPositionY(), this.children[i].getScaleX(), this.children[i].getScaleY());
+                this.bufferctx.translate(this.children[i].getPositionX(), this.children[i].getPositionY());
+                this.bufferctx.rotate(this.children[i].rotateAngle * (Math.PI/180));
+                this.bufferctx.drawImage(this.children[i].getSprite(), -this.children[i].getTranslateX(), -this.children[i].getTranslateY(), this.children[i].getScaleX(), this.children[i].getScaleY());
+                this.bufferctx.rotate(-this.children[i].rotateAngle * (Math.PI/180));
+                this.bufferctx.translate(-this.children[i].getPositionX(), -this.children[i].getPositionY());
             }
             else if(this.children[i] instanceof SkullText)
             {
@@ -43,7 +62,11 @@ function SkullEngine(fps, anchura, altura)
             {
                 if(this.currentScene.children[i] instanceof SkullSprite)
                 {
-                    this.bufferctx.drawImage(this.currentScene.children[i].getSprite(), this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY(), this.currentScene.children[i].getScaleX(), this.currentScene.children[i].getScaleY());
+                    this.bufferctx.translate(this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY());
+                    this.bufferctx.rotate(this.currentScene.children[i].rotateAngle * (Math.PI/180));
+                    this.bufferctx.drawImage(this.currentScene.children[i].getSprite(), -this.currentScene.children[i].getTranslateX(), -this.currentScene.children[i].getTranslateY(), this.currentScene.children[i].getScaleX(), this.currentScene.children[i].getScaleY());
+                    this.bufferctx.rotate(-this.currentScene.children[i].rotateAngle * (Math.PI/180));
+                    this.bufferctx.translate(-this.currentScene.children[i].getPositionX(), -this.currentScene.children[i].getPositionY());
                 }
                 else if(this.currentScene.children[i] instanceof SkullText)
                 {
@@ -82,8 +105,8 @@ function SkullEngine(fps, anchura, altura)
     {
         var self = this;
         //Dimensiones de la pantalla
-        this.anchura = document.getElementById("canvas").width = anchura;
-        this.altura = document.getElementById("canvas").height = altura;
+        document.getElementById("canvas").width = this.width;
+        document.getElementById("canvas").height = this.height;
 
         this.canvas = document.getElementById("canvas");
         this.ctx = this.canvas.getContext("2d");

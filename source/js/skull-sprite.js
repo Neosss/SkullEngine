@@ -5,10 +5,20 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     this.positionY = posY || 0;
     
     this.sprite = new Image();
-    this.sprite.src = this.path;
+    
+    this.anchorPointX = 0;
+    this.anchorPointY = 0;
+    
+    this.scaleX;
+    this.scaleY;
     
     this.tmpScaleX = scaleX;
     this.tmpScaleY = scaleY;
+    
+    this.width = 0;
+    this.height = 0;
+    
+    this.rotateAngle = 0;
     
     this.enabled = true;
     
@@ -16,8 +26,53 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     
     this.sprite.onload = function ()
     {
-        self.scaleX = self.tmpScaleX || self.sprite.width;
-        self.scaleY = self.tmpScaleY || self.sprite.height;
+        
+    };
+    
+    this.sprite.src = this.path;
+    
+    this.setAnchorPoint = function(x, y)
+    {
+        if(x != undefined)
+        {
+            this.anchorPointX = clamp(x, 0.0, 1.0);
+        }
+        if(y != undefined)
+        {
+            this.anchorPointY = clamp(y, 0.0, 1.0);
+        }
+    };
+    
+    this.setRotation = function(angle)
+    {
+        if(angle != undefined)
+        {
+            this.rotateAngle = angle;
+        }
+    };
+    
+    this.getTranslateX = function()
+    {
+        if(this.scaleX != undefined)
+        {
+            return (this.anchorPointX * this.scaleX);
+        }
+        else
+        {
+            return (this.anchorPointX * this.sprite.width);
+        }
+    };
+    
+    this.getTranslateY = function()
+    {
+        if(this.scaleY != undefined)
+        {
+            return (this.anchorPointY * this.scaleY);
+        }
+        else
+        {
+            return (this.anchorPointY * this.sprite.height);
+        }
     };
     
     this.setPositionX = function(posX)
@@ -105,12 +160,25 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     
     this.getScaleX = function()
     {
-        return this.scaleX;
+        if(this.scaleX != undefined)
+        {
+            return this.scaleX;
+        }
+        else
+        {
+            return this.sprite.width;
+        }
     };
     
     this.getScaleY = function()
     {
-        return this.scaleY;
-        
+        if(this.scaleX != undefined)
+        {
+            return this.scaleY;
+        }
+        else
+        {
+            return this.sprite.height;
+        }
     };
 }
