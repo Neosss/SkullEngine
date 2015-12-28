@@ -3,27 +3,27 @@ function SkullSound(source, volume, loop)
     this.source=source;
     this.volume=volume;
     this.loop=loop;
-    var son;
-    this.son=son;
+    this.sound;
     this.finish=false;
-    this.stop=function()
+    
+    this.pause = function()
     {
-        document.body.removeChild(this.son);
+        this.sound.pause();
     };
-    this.start=function(){
-        if(this.finish)return false;
-        this.son=document.createElement("embed");
-        this.son.setAttribute("src",this.source);
-        this.son.setAttribute("hidden","true");
-        this.son.setAttribute("volume",this.volume);
-        this.son.setAttribute("autostart","true");
-        this.son.setAttribute("loop",this.loop);
-        document.body.appendChild(this.son);
+    
+    this.start = function()
+    {
+        this.sound = new Audio(this.source);
+        this.sound.loop = this.loop;
+        this.sound.volume = clamp(this.volume, 0.0, 1.0);
+        this.sound.play();
     };
-    this.remove=function(){
-        document.body.removeChild(this.son);
-        this.finish=true;
+    
+    this.stop = function()
+    {
+        
     };
+    
     this.init=function(volume,loop)
     {
         this.finish=false;

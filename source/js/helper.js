@@ -53,7 +53,7 @@ function alignX(presetPos, screenWidth)
             break;
         //right
         case 2:
-            return (screenWidth / 4) * 3;
+            return (screenWidth / 4) * 3.2;
             break;
         default:
             return 0;

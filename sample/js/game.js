@@ -2,14 +2,12 @@
 //Featuring Skull Engine.
 
 var game = new SkullEngine(60, 800, 600);
-var mySound = new SkullSound("song/Im here bitches.mp3", 100, true);
+var mySound = new SkullSound("song/bgm02.ogg", 1, true);
 mySound.start();
 mySound.init(100,true);
 
 game.init();
 
-var background = new SkullSprite("images/fondo.jpg");
+var background = new SkullSprite("images/background/bg04.bmp");
 background.setScaleY(600, true);
-background.setAnchorPoint(0.5, 0.5);
-background.setPosition(400, 300);
 game.addChild(background);

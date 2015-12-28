@@ -43,7 +43,7 @@ function SkullScene()
                 }
                 if(this.characters[i].generalProperties.scaleY != undefined)
                 {
-                    sprite.setScaleY(this.characters[i].generalProperties.scaleX, this.characters[i].generalProperties.scaleAxisAuto);
+                    sprite.setScaleY(this.characters[i].generalProperties.scaleY, this.characters[i].generalProperties.scaleAxisAuto);
                 }
                 sprite.setRotation(this.characters[i].generalProperties.rotation);
                 

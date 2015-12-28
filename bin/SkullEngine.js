@@ -88,7 +88,7 @@ function alignX(presetPos, screenWidth)
             break;
         //right
         case 2:
-            return (screenWidth / 4) * 3;
+            return (screenWidth / 4) * 3.2;
             break;
         default:
             return 0;
@@ -343,33 +343,33 @@ function SkullSound(source, volume, loop)
     this.source=source;
     this.volume=volume;
     this.loop=loop;
-    var son;
-    this.son=son;
+    this.sound;
     this.finish=false;
-    this.stop=function()
+    
+    this.pause = function()
     {
-        document.body.removeChild(this.son);
-    }
-    this.start=function(){
-        if(this.finish)return false;
-        this.son=document.createElement("embed");
-        this.son.setAttribute("src",this.source);
-        this.son.setAttribute("hidden","true");
-        this.son.setAttribute("volume",this.volume);
-        this.son.setAttribute("autostart","true");
-        this.son.setAttribute("loop",this.loop);
-        document.body.appendChild(this.son);
-    }
-    this.remove=function(){
-        document.body.removeChild(this.son);
-        this.finish=true;
-    }
+        this.sound.pause();
+    };
+    
+    this.start = function()
+    {
+        this.sound = new Audio(this.source);
+        this.sound.loop = this.loop;
+        this.sound.volume = clamp(this.volume, 0.0, 1.0);
+        this.sound.play();
+    };
+    
+    this.stop = function()
+    {
+        
+    };
+    
     this.init=function(volume,loop)
     {
         this.finish=false;
         this.volume=volume;
         this.loop=loop;
-    }
+    };
 }
 
 function SkullCharacter(name)
@@ -484,7 +484,7 @@ function SkullScene()
                 }
                 if(this.characters[i].generalProperties.scaleY != undefined)
                 {
-                    sprite.setScaleY(this.characters[i].generalProperties.scaleX, this.characters[i].generalProperties.scaleAxisAuto);
+                    sprite.setScaleY(this.characters[i].generalProperties.scaleY, this.characters[i].generalProperties.scaleAxisAuto);
                 }
                 sprite.setRotation(this.characters[i].generalProperties.rotation);
                 
