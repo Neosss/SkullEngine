@@ -43,11 +43,14 @@ function SkullEngine(fps, width, height)
         {
             if(this.children[i] instanceof SkullSprite)
             {
-                this.bufferctx.translate(this.children[i].getPositionX(), this.children[i].getPositionY());
-                this.bufferctx.rotate(this.children[i].rotateAngle * (Math.PI/180));
-                this.bufferctx.drawImage(this.children[i].getSprite(), -this.children[i].getTranslateX(), -this.children[i].getTranslateY(), this.children[i].getScaleX(), this.children[i].getScaleY());
-                this.bufferctx.rotate(-this.children[i].rotateAngle * (Math.PI/180));
-                this.bufferctx.translate(-this.children[i].getPositionX(), -this.children[i].getPositionY());
+                if(this.children[i].enabled && this.children[i].show)
+                {
+                    this.bufferctx.translate(this.children[i].getPositionX(), this.children[i].getPositionY());
+                    this.bufferctx.rotate(this.children[i].rotateAngle * (Math.PI/180));
+                    this.bufferctx.drawImage(this.children[i].getSprite(), -this.children[i].getTranslateX(), -this.children[i].getTranslateY(), this.children[i].getScaleX(), this.children[i].getScaleY());
+                    this.bufferctx.rotate(-this.children[i].rotateAngle * (Math.PI/180));
+                    this.bufferctx.translate(-this.children[i].getPositionX(), -this.children[i].getPositionY());
+                }
             }
             else if(this.children[i] instanceof SkullText)
             {
@@ -62,11 +65,14 @@ function SkullEngine(fps, width, height)
             {
                 if(this.currentScene.children[i] instanceof SkullSprite)
                 {
-                    this.bufferctx.translate(this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY());
-                    this.bufferctx.rotate(this.currentScene.children[i].rotateAngle * (Math.PI/180));
-                    this.bufferctx.drawImage(this.currentScene.children[i].getSprite(), -this.currentScene.children[i].getTranslateX(), -this.currentScene.children[i].getTranslateY(), this.currentScene.children[i].getScaleX(), this.currentScene.children[i].getScaleY());
-                    this.bufferctx.rotate(-this.currentScene.children[i].rotateAngle * (Math.PI/180));
-                    this.bufferctx.translate(-this.currentScene.children[i].getPositionX(), -this.currentScene.children[i].getPositionY());
+                   if(this.currentScene.children[i].enabled && this.currentScene.children[i].show)
+                   {
+                        this.bufferctx.translate(this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY());
+                        this.bufferctx.rotate(this.currentScene.children[i].rotateAngle * (Math.PI/180));
+                        this.bufferctx.drawImage(this.currentScene.children[i].getSprite(), -this.currentScene.children[i].getTranslateX(), -this.currentScene.children[i].getTranslateY(), this.currentScene.children[i].getScaleX(), this.currentScene.children[i].getScaleY());
+                        this.bufferctx.rotate(-this.currentScene.children[i].rotateAngle * (Math.PI/180));
+                        this.bufferctx.translate(-this.currentScene.children[i].getPositionX(), -this.currentScene.children[i].getPositionY());
+                   }
                 }
                 else if(this.currentScene.children[i] instanceof SkullText)
                 {

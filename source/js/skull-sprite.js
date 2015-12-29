@@ -21,6 +21,7 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     this.rotateAngle = 0;
     
     this.enabled = true;
+    this.show = true;
     
     var self = this;
     
