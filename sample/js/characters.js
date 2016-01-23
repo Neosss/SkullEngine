@@ -9,7 +9,6 @@ wanko.addStateSprite("normal-taiku-portrait", "images/character/wanko/wanko06.pn
 wanko.addStateSprite("normal-uniform", "images/character/wanko/wanko07.png");
 wanko.addStateSprite("normal-mizugi", "images/character/wanko/wanko08.png");
 wanko.addStateSprite("sad-uniform-long", "images/character/wanko/wanko09.png");
-
 wanko.setState("normal-mizugi");
 
 var kris = new SkullCharacter("Kris", game.width, game.height);
@@ -44,3 +43,8 @@ miyako.addStateSprite("normal-uniform-portrait", "images/character/miyako/miyako
 miyako.addStateSprite("turned-uniform", "images/character/miyako/miyako07.png");
 miyako.addStateSprite("normal-taiku", "images/character/miyako/miyako08.png");
 miyako.setState("normal-cloth");
+
+var skullchan = new SkullCharacter("Skull-chan", game.width, game.height);
+skullchan.generalProperties.scaleY = 550;
+skullchan.addStateSprite("normal", "images/skullchan.png");
+skullchan.setState("normal");

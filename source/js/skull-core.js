@@ -77,7 +77,11 @@ function SkullEngine(fps, width, height)
                 else if(this.currentScene.children[i] instanceof SkullText)
                 {
                     this.currentScene.children[i].setFont(this);
-                    this.bufferctx.fillText(this.currentScene.children[i].getText(), this.currentScene.children[i].getPositionX(), this.currentScene.children[i].getPositionY());
+                    
+                    for(var j = 0; j < this.currentScene.children[i].lines.length; j++)
+                    {
+                        this.bufferctx.fillText(this.currentScene.children[i].lines[j], this.currentScene.children[i].getPositionX(), this.currentScene.children[i].linesY[j]);
+                    }
                 }
             }
         }
