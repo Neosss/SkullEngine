@@ -46,5 +46,10 @@ miyako.setState("normal-cloth");
 
 var skullchan = new SkullCharacter("Skull-chan", game.width, game.height);
 skullchan.generalProperties.scaleY = 550;
+//skullchan.generalProperties.positionX = alignX(game.left, game.width);
 skullchan.addStateSprite("normal", "images/skullchan.png");
 skullchan.setState("normal");
+skullchan.setTextColor(240, 240, 240);
+
+var narrator = new SkullCharacter("Narrator", game.width, game.height);
+narrator.setTextColor(255, 0, 0);

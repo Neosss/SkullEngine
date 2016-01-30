@@ -60,7 +60,6 @@ function SkullEngine(fps, width, height)
         }
         if(this.currentScene != undefined)
         {
-        
             for(var i = 0; i < this.currentScene.children.length; i++)
             {
                 if(this.currentScene.children[i] instanceof SkullSprite)

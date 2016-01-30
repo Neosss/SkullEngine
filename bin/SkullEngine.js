@@ -282,6 +282,46 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     };
 }
 
+function Input()
+{
+	this.pressedKeys = [];
+	
+    var self = this;
+    
+	this.keycode =
+	{
+		"BACKSPACE":8,"TAB":9,"ENTER":13,"ESCAPE":27,
+		"SPACE":32, "LEFT":37, "UP":38, "RIGHT":39, "DOWN":40, "0":48,
+		"1":49, "2":50, "3":51, "4":52 , "5":53, "6":54, "7":55, "8":56,
+		"9":57, "A":65, "B":66, "C":67, "D":68, "E":69, "F":70,
+		"G":71, "H":72, "I":73, "J":74, "K":75, "L":76,
+		"M":77, "N":78, "O":79, "P":80, "Q":81, "R":82,
+		"S":83, "T":84, "U":85, "V":86, "W":87, "X":88,
+		"Y":89, "Z":90
+	};
+	
+	this.addKeyboardEvents = function()
+	{
+        for(var i = 0; i < 250; i++)
+        {
+            this.pressedKeys.push(false);
+        }
+		
+        document.addEventListener("keydown", this.keyDownHandler, false);
+		document.addEventListener("keyup", this.keyUpHandler, false);
+	};
+	
+	this.keyDownHandler = function(e)
+	{
+		self.pressedKeys[e.keyCode] = true;
+	};
+	
+	this.keyUpHandler = function(e)
+	{
+		self.pressedKeys[e.keyCode] = false;
+	};
+}
+
 function SkullText(text, fontSize, positionX, positionY, maxWidth, fontHeight)
 {
     this.text = text || "";
@@ -327,6 +367,14 @@ function SkullText(text, fontSize, positionX, positionY, maxWidth, fontHeight)
             y += this.fontHeight;
             this.linesY.push(y);
         }
+    };
+    
+    this.resetText = function(text, context)
+    {
+        this.text = text;
+        this.lines.length = 0;
+        this.linesY.length = 0;
+        this.setLines(context);
     };
     
     this.setFont = function(context)
@@ -528,6 +576,33 @@ function SkullCharacter(name, width, height)
     };
 }
 
+function SkullDialog()
+{
+    this.dialogCounter = 0;
+    //who says
+    this.character = [];
+    //what
+    this.dialog = [];
+    //------
+    this.state = [];
+    
+    this.addDialog = function(character, dialog)
+    {
+        this.character.push(character);
+        this.dialog.push(dialog);
+    };
+    
+    this.changeStates = function(character, action, detail)
+    {
+        
+    };
+    
+    this.nextDialog = function()
+    {
+        this.dialogCounter++;
+    };
+}
+
 function SkullScene(width, height)
 {
     this.characters = [];
@@ -552,8 +627,8 @@ function SkullScene(width, height)
         //character.generalProperties.positionX = alignX(this.center, this.width);
         //character.generalProperties.positionY = this.height;
         this.characters.push(character);
-        this.characters[this.characters.length - 1].generalProperties.positionX = alignX(this.center, this.width);
-        this.characters[this.characters.length - 1].generalProperties.positionY = this.height;
+        //this.characters[this.characters.length - 1].generalProperties.positionX = alignX(this.center, this.width);
+       // this.characters[this.characters.length - 1].generalProperties.positionY = this.height;
     };
     
     this.addBackground = function(keyword, path)
@@ -669,7 +744,6 @@ function SkullEngine(fps, width, height)
         }
         if(this.currentScene != undefined)
         {
-        
             for(var i = 0; i < this.currentScene.children.length; i++)
             {
                 if(this.currentScene.children[i] instanceof SkullSprite)

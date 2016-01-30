@@ -45,6 +45,14 @@ function SkullText(text, fontSize, positionX, positionY, maxWidth, fontHeight)
         }
     };
     
+    this.resetText = function(text, context)
+    {
+        this.text = text;
+        this.lines.length = 0;
+        this.linesY.length = 0;
+        this.setLines(context);
+    };
+    
     this.setFont = function(context)
     {
         context.bufferctx.font = this.fontSize + 'px Arial';
