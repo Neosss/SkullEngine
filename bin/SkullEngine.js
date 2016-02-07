@@ -574,27 +574,85 @@ function SkullCharacter(name, width, height)
         this.colorG = g;
         this.colorB = b;
     };
+    
+    this.setPositionX = function(posX)
+    {
+        if(this.currentState != undefined)
+        {
+            var index = this.states.indexOf(this.currentState);
+            this.sprites[index].setPositionX(posX);
+        }
+    };
 }
 
 function SkullDialog()
 {
     this.dialogCounter = 0;
-    //who says
+    this.currentIndex = -1;
+    this.currentChangesIndex = -1;
+    //who says what
     this.character = [];
-    //what
     this.dialog = [];
-    //------
+    //what shows where and how
     this.state = [];
+    
+    this.characterIndex = 0;
+    this.stateIndex = 1;
+    this.detailIndex = 2;
     
     this.addDialog = function(character, dialog)
     {
+        this.currentIndex++;
+        //reset changes index
+        this.currentChangesIndex = -1;
         this.character.push(character);
         this.dialog.push(dialog);
     };
     
-    this.changeStates = function(character, action, detail)
+    this.changeStates = function(character, state, detail)
     {
-        
+        //if initiated dialog index
+        if(this.currentIndex > -1)
+        {
+            //if not initiated change index
+            if(this.currentChangesIndex == -1)
+            {
+                this.state[this.currentIndex] = [];
+            }
+            
+            this.currentChangesIndex++;
+            this.state[this.currentIndex][this.currentChangesIndex] = [];
+            this.state[this.currentIndex][this.currentChangesIndex][this.characterIndex] = character;
+            this.state[this.currentIndex][this.currentChangesIndex][this.stateIndex] = state;
+            this.state[this.currentIndex][this.currentChangesIndex][this.detailIndex] = detail;
+        }
+    };
+    
+    this.update = function()
+    {
+        if(this.state[this.dialogCounter] != undefined)
+        {
+            //for each change in the current dialog
+            for(var i = 0; i < this.state[this.dialogCounter].length; i++)
+            {
+                if(this.state[this.dialogCounter][i][this.stateIndex] == "positionX")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].setPositionX(this.state[this.dialogCounter][i][this.detailIndex]);
+                }
+                else if(this.state[this.dialogCounter][i][this.stateIndex] == "hide")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].hideCharacter();
+                }
+                else if(this.state[this.dialogCounter][i][this.stateIndex] == "show")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].showCharacter();
+                }
+                else if(this.state[this.dialogCounter][i][this.stateIndex] == "state")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].setState(this.state[this.dialogCounter][i][this.detailIndex]);
+                }
+            }
+        }
     };
     
     this.nextDialog = function()

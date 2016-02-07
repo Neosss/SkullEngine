@@ -9,7 +9,8 @@ wanko.addStateSprite("normal-taiku-portrait", "images/character/wanko/wanko06.pn
 wanko.addStateSprite("normal-uniform", "images/character/wanko/wanko07.png");
 wanko.addStateSprite("normal-mizugi", "images/character/wanko/wanko08.png");
 wanko.addStateSprite("sad-uniform-long", "images/character/wanko/wanko09.png");
-wanko.setState("normal-mizugi");
+wanko.setState("normal-uniform");
+wanko.setTextColor(240, 240, 240);
 
 var kris = new SkullCharacter("Kris", game.width, game.height);
 kris.generalProperties.scaleY = 630;
@@ -53,3 +54,6 @@ skullchan.setTextColor(240, 240, 240);
 
 var narrator = new SkullCharacter("Narrator", game.width, game.height);
 narrator.setTextColor(255, 0, 0);
+
+var salva = new SkullCharacter("Salva", game.width, game.height);
+salva.setTextColor(200, 200, 255);
