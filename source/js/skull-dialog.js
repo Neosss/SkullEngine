@@ -8,6 +8,9 @@ function SkullDialog()
     this.dialog = [];
     //what shows where and how
     this.state = [];
+    this.backgrounds = [];
+    this.backgroundSprites = [];
+    this.bgHidden = [];
     
     this.characterIndex = 0;
     this.stateIndex = 1;
@@ -20,6 +23,34 @@ function SkullDialog()
         this.currentChangesIndex = -1;
         this.character.push(character);
         this.dialog.push(dialog);
+        
+        this.backgrounds.push(this.backgrounds[this.currentIndex-1]);
+        this.bgHidden.push(this.bgHidden[this.currentIndex-1]);
+    };
+    
+    this.setBackground = function(background)
+    {
+        if(this.backgrounds[this.currentIndex-1] != undefined)
+        {
+            this.backgrounds[this.currentIndex-1].enabled = false;
+        }
+        
+        this.backgrounds[this.currentIndex] = background;
+    };
+    
+    this.setBackgroundEx = function(index)
+    {
+        this.backgrounds[this.currentIndex] = index;
+    };
+    
+    this.hideBackground = function()
+    {
+        this.bgHidden[this.currentIndex] = true;
+    };
+    
+    this.showBackground = function()
+    {
+        this.bgHidden[this.currentIndex] = false;
     };
     
     this.changeStates = function(character, state, detail)
@@ -43,12 +74,44 @@ function SkullDialog()
     
     this.update = function()
     {
-        //for each change in the current dialog
-        for(var i = 0; i < this.state[this.currentIndex].length; i++)
+        if(this.backgrounds[this.dialogCounter] != undefined)
         {
-            if(this.state[this.currentIndex][i][this.stateIndex] == "positionX")
+            if(this.backgrounds[this.dialogCounter-1] != undefined)
+                this.backgroundSprites[this.backgrounds[this.dialogCounter-1]].enabled = false;
+            this.backgroundSprites[this.backgrounds[this.dialogCounter]].enabled = !this.bgHidden[this.dialogCounter];
+            /*
+            if(this.bgHidden[this.dialogCounter])
             {
-                this.state[this.currentIndex][i][this.characterIndex].setPositionX(this.state[this.currentIndex][i][this.detailIndex]);
+                this.backgroundSprites[this.dialogCounter].enabled = false;
+            }
+            else
+            {
+                this.backgrounds[this.dialogCounter].enabled = true;
+            }
+            */
+        }
+        
+        if(this.state[this.dialogCounter] != undefined)
+        {
+            //for each change in the current dialog
+            for(var i = 0; i < this.state[this.dialogCounter].length; i++)
+            {
+                if(this.state[this.dialogCounter][i][this.stateIndex] == "positionX")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].setPositionX(this.state[this.dialogCounter][i][this.detailIndex]);
+                }
+                else if(this.state[this.dialogCounter][i][this.stateIndex] == "hide")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].hideCharacter();
+                }
+                else if(this.state[this.dialogCounter][i][this.stateIndex] == "show")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].showCharacter();
+                }
+                else if(this.state[this.dialogCounter][i][this.stateIndex] == "state")
+                {
+                    this.state[this.dialogCounter][i][this.characterIndex].setState(this.state[this.dialogCounter][i][this.detailIndex]);
+                }
             }
         }
     };

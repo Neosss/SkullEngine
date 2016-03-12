@@ -112,4 +112,13 @@ function SkullCharacter(name, width, height)
         this.colorG = g;
         this.colorB = b;
     };
+    
+    this.setPositionX = function(posX)
+    {
+        if(this.currentState != undefined)
+        {
+            var index = this.states.indexOf(this.currentState);
+            this.sprites[index].setPositionX(posX);
+        }
+    };
 }

@@ -595,6 +595,9 @@ function SkullDialog()
     this.dialog = [];
     //what shows where and how
     this.state = [];
+    this.backgrounds = [];
+    this.backgroundSprites = [];
+    this.bgHidden = [];
     
     this.characterIndex = 0;
     this.stateIndex = 1;
@@ -607,6 +610,34 @@ function SkullDialog()
         this.currentChangesIndex = -1;
         this.character.push(character);
         this.dialog.push(dialog);
+        
+        this.backgrounds.push(this.backgrounds[this.currentIndex-1]);
+        this.bgHidden.push(this.bgHidden[this.currentIndex-1]);
+    };
+    
+    this.setBackground = function(background)
+    {
+        if(this.backgrounds[this.currentIndex-1] != undefined)
+        {
+            this.backgrounds[this.currentIndex-1].enabled = false;
+        }
+        
+        this.backgrounds[this.currentIndex] = background;
+    };
+    
+    this.setBackgroundEx = function(index)
+    {
+        this.backgrounds[this.currentIndex] = index;
+    };
+    
+    this.hideBackground = function()
+    {
+        this.bgHidden[this.currentIndex] = true;
+    };
+    
+    this.showBackground = function()
+    {
+        this.bgHidden[this.currentIndex] = false;
     };
     
     this.changeStates = function(character, state, detail)
@@ -630,6 +661,23 @@ function SkullDialog()
     
     this.update = function()
     {
+        if(this.backgrounds[this.dialogCounter] != undefined)
+        {
+            if(this.backgrounds[this.dialogCounter-1] != undefined)
+                this.backgroundSprites[this.backgrounds[this.dialogCounter-1]].enabled = false;
+            this.backgroundSprites[this.backgrounds[this.dialogCounter]].enabled = !this.bgHidden[this.dialogCounter];
+            /*
+            if(this.bgHidden[this.dialogCounter])
+            {
+                this.backgroundSprites[this.dialogCounter].enabled = false;
+            }
+            else
+            {
+                this.backgrounds[this.dialogCounter].enabled = true;
+            }
+            */
+        }
+        
         if(this.state[this.dialogCounter] != undefined)
         {
             //for each change in the current dialog
@@ -661,6 +709,122 @@ function SkullDialog()
     };
 }
 
+//Generated text box with shapes
+function SkullTextbox(x, y, width, height)
+{
+    this.enabled = true;
+    
+    //configuration
+    this.isNameLabelOn = false;
+    this.isIconOn = false;
+    this.colorR = 0;
+    this.colorG = 0;
+    this.colorB = 0;
+    this.opacity;
+    this.width = width;
+    this.height = height;
+    this.positionX = x;
+    this.positionY = y;
+    
+    //text box
+    this.fontSize = 12;
+    this.textPositionX = 0;
+    this.textPositionY = 0;
+    this.maxWidth = 100;
+    this.fontHeight = 10;
+    
+    //label box
+    this.labelFontSize = 12;
+    this.labelPositionX = 0;
+    this.labelPositionY = 0;
+    this.labelWidth = 150;
+    this.labelHeight = 50;
+    
+    //icon
+    this.iconPositionX = 0;
+    this.iconPositionY = 0;
+    this.iconScale = 0;
+    
+    this.hide = function()
+    {
+        this.enabled = false;
+    };
+    
+    this.show = function()
+    {
+        this.enabled = true;
+    };
+    
+    this.enableLabel = function()
+    {
+        this.isNameLabelOn = true;
+    };
+    
+    this.setLabelProperties = function(fontSize, x, y, w, h)
+    {
+        this.labelFontSize = fontSize;
+        this.labelPositionX = x;
+        this.labelPositionY = y;
+        this.labelWidth = w;
+        this.labelHeight = h;
+    };
+    
+    this.setIconProperties = function(x, y, scale)
+    {
+        this.iconPositionX = x;
+        this.iconPositionY = y;
+        this.iconScale = scale;
+    };
+    
+    this.enableIcon = function()
+    {
+        this.isIconOn = true;
+    };
+    
+    //opacity from 0.0 to 1.0
+    this.setColor = function(r, g, b, opacity)
+    {
+        this.colorR = r;
+        this.colorG = g;
+        this.colorB = b;
+        this.opacity = clamp(opacity, 0.0, 1.0);
+    };
+    
+    this.setTextProperties = function(fontSize, x, y, maxWidth, fontHeight)
+    {
+        this.fontSize = fontSize;
+        this.textPositionX = x;
+        this.textPositionY = y;
+        this.maxWidth = maxWidth;
+        this.fontHeight = fontHeight;
+    };
+    
+    this.createSimpleTextbox = function(context)
+    {
+        if(this.enabed)
+        {
+            context.fillStyle = "rgba(" + this.colorR + "," + this.colorG + "," + this.colorB + "," + this.opacity+")";
+            context.fillRect(this.positionX, this.positionY, this.width, this.height);
+            context.lineWidth = 2;
+            context.strokeStyle = "rgba(" + (this.colorR - 50)+ "," + (this.colorG - 50) + "," + (this.colorB - 50) + "," + this.opacity+")";
+            context.strokeRect(this.positionX, this.positionY, this.width, this.height);
+
+            if(this.isNameLabelOn)
+            {
+                context.fillStyle = "rgba(" + this.colorR + "," + this.colorG + "," + this.colorB + "," + this.opacity+")";
+                context.fillRect(this.labelPositionX, this.labelPositionY, this.labelWidth, this.labelHeight);
+            }
+        }
+    };
+}
+
+//Custom text box
+function SkullCustomTextbox()
+{
+    this.isNameLabelOn = false;
+    this.isIconOn = false;
+}
+
 function SkullScene(width, height)
 {
     this.characters = [];
@@ -668,6 +832,8 @@ function SkullScene(width, height)
     this.backgrounds = [];
     this.backgroundKeyword = [];
     this.currentBackground;
+    
+    this.textBox;
     
     this.sprites = [];
     
@@ -679,6 +845,12 @@ function SkullScene(width, height)
     
     this.width = width;
     this.height = height;
+    
+    this.addTextBox = function(textbox)
+    {
+        this.textbox = textbox;
+        this.children.push(textbox);
+    };
     
     this.addCharacter = function(character)
     {
@@ -780,6 +952,7 @@ function SkullEngine(fps, width, height)
         var self = this;
         
         this.bufferctx.clearRect(0, 0, this.width, this.height);
+        this.ctx.clearRect(0, 0, this.width, this.height);
         
         for(var i = 0; i < this.children.length; i++)
         {
@@ -822,6 +995,30 @@ function SkullEngine(fps, width, height)
                     for(var j = 0; j < this.currentScene.children[i].lines.length; j++)
                     {
                         this.bufferctx.fillText(this.currentScene.children[i].lines[j], this.currentScene.children[i].getPositionX(), this.currentScene.children[i].linesY[j]);
+                    }
+                }
+                else if(this.currentScene.children[i] instanceof SkullTextbox)
+                {
+                    //this.currentScene.children[i].createSimpleTextbox(this.bufferctx);
+                    if(this.currentScene.children[i].enabled)
+                    {
+                        var prevFillstyle = this.bufferctx.fillStyle;
+                        this.bufferctx.fillStyle = "rgba(" + this.currentScene.children[i].colorR + "," + this.currentScene.children[i].colorG + "," + this.currentScene.children[i].colorB + "," + this.currentScene.children[i].opacity+")";
+                        this.bufferctx.fillRect(this.currentScene.children[i].positionX, this.currentScene.children[i].positionY, this.currentScene.children[i].width, this.currentScene.children[i].height);
+                        this.bufferctx.lineWidth = 2;
+                        this.bufferctx.strokeStyle = "rgba(" + clamp(this.currentScene.children[i].colorR - 50, 0, 255)+ "," + clamp(this.currentScene.children[i].colorG - 50, 0, 255) + "," + clamp(this.currentScene.children[i].colorB - 50, 0, 255) + "," + clamp(this.currentScene.children[i].opacity + 0.2, 0.0, 1.0) + ")";
+                        this.bufferctx.strokeRect(this.currentScene.children[i].positionX, this.currentScene.children[i].positionY, this.currentScene.children[i].width, this.currentScene.children[i].height);
+                        
+                        if(this.currentScene.children[i].isNameLabelOn)
+                        {
+                            this.bufferctx.fillStyle = "rgba(" + this.currentScene.children[i].colorR + "," + this.currentScene.children[i].colorG + "," + this.currentScene.children[i].colorB + "," + this.currentScene.children[i].opacity+")";
+                            this.bufferctx.fillRect(this.currentScene.children[i].labelPositionX, this.currentScene.children[i].labelPositionY, this.currentScene.children[i].labelWidth, this.currentScene.children[i].labelHeight);
+                            
+                            this.bufferctx.strokeStyle = "rgba(" + clamp(this.currentScene.children[i].colorR - 50, 0, 255)+ "," + clamp(this.currentScene.children[i].colorG - 50, 0, 255) + "," + clamp(this.currentScene.children[i].colorB - 50, 0, 255) + "," + clamp(this.currentScene.children[i].opacity + 0.2, 0.0, 1.0) + ")";
+                        this.bufferctx.strokeRect(this.currentScene.children[i].labelPositionX, this.currentScene.children[i].labelPositionY, this.currentScene.children[i].labelWidth, this.currentScene.children[i].labelHeight);
+                        }
+                        
+                        this.bufferctx.fillStyle = prevFillstyle;
                     }
                 }
             }
