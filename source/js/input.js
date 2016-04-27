@@ -1,10 +1,11 @@
 function Input()
 {
-	this.pressedKeys = [];
-	
     var self = this;
     
-	this.keycode =
+    //keyboard input
+	this.pressedKeys = [];
+	
+    this.keycode =
 	{
 		"BACKSPACE":8,"TAB":9,"ENTER":13,"ESCAPE":27,
 		"SPACE":32, "LEFT":37, "UP":38, "RIGHT":39, "DOWN":40, "0":48,
@@ -15,7 +16,19 @@ function Input()
 		"S":83, "T":84, "U":85, "V":86, "W":87, "X":88,
 		"Y":89, "Z":90
 	};
-	
+    
+    //canvas offset
+    this.offsetX;
+    this.offsetY;
+    //mouse input variables
+    this.isMouseButtonDown;
+    this.captureMousePosX;
+    this.captureMousePosY;
+    //Mouse position X in local canvas coordinates
+    this.mousePositionX;
+    //Mouse position Y in local canvas coordinates
+    this.mousePositionY;
+    
 	this.addKeyboardEvents = function()
 	{
         for(var i = 0; i < 250; i++)
@@ -26,6 +39,11 @@ function Input()
         document.addEventListener("keydown", this.keyDownHandler, false);
 		document.addEventListener("keyup", this.keyUpHandler, false);
 	};
+    
+    this.addMouseEvents = function()
+    {
+        document.addEventListener("mousedown", this.mouseDown, false);
+    };
 	
 	this.keyDownHandler = function(e)
 	{
@@ -36,4 +54,13 @@ function Input()
 	{
 		self.pressedKeys[e.keyCode] = false;
 	};
+        
+    this.mouseDown = function(e)
+    {
+        var tmpMouseX = e.pageX;
+        var tmpMouseY = e.pageY;
+        
+        this.mousePositionX = this.offsetX - tmpMouseX;
+        this.mousePositionY = this.offsetY - tmpMouseY;
+    };
 }
