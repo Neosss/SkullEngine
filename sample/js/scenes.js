@@ -154,4 +154,25 @@ eventHandler.keyDownHandler = function(e)
     }
 };
 
+eventHandler.mouseDown = function(e)
+{
+    var canvasX = game.canvas.getBoundingClientRect().left;
+    var canvasY = game.canvas.getBoundingClientRect().top;
+    if(e.pageX > canvasX && e.pageX < canvasX + game.width && e.pageY > canvasY && e.pageY < canvasY + game.height)
+    {
+        dialog2.update();
+        nameLabel.resetText(dialog2.character[dialog2.dialogCounter].name, game);
+        nameLabel.setColor(dialog2.character[dialog2.dialogCounter].colorR,
+                          dialog2.character[dialog2.dialogCounter].colorG,
+                          dialog2.character[dialog2.dialogCounter].colorB);
+        text.resetText(dialog2.dialog[dialog2.dialogCounter], game);
+        text.setColor(dialog2.character[dialog2.dialogCounter].colorR,
+                          dialog2.character[dialog2.dialogCounter].colorG,
+                          dialog2.character[dialog2.dialogCounter].colorB);
+        dialog2.nextDialog();    
+    }
+    
+};
+
 eventHandler.addKeyboardEvents();
+eventHandler.addMouseEvents();
