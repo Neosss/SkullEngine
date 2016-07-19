@@ -12,6 +12,8 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     this.scaleX;
     this.scaleY;
     
+    this.rect = {x : 0, y : 0, w : 0, h : 0};
+    
     this.tmpScaleX = scaleX;
     this.tmpScaleY = scaleY;
     
@@ -27,7 +29,8 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     
     this.sprite.onload = function ()
     {
-        
+        self.scaleX = self.sprite.width;
+        self.scaleY = self.sprite.height;
     };
     
     this.sprite.src = this.path;
@@ -137,6 +140,9 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
             self.scaleX = scaleX;
             self.scaleY = scaleY;
         }
+        
+        self.scaleX = scaleX;
+        self.scaleY = scaleY;
     };
     
     this.getPath = function()
@@ -181,5 +187,33 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
         {
             return this.sprite.height;
         }
+    };
+    
+    this.getRect = function()
+    {
+        this.rect.x = this.positionX;
+        this.rect.y = this.positionY;
+        this.rect.w = this.scaleX;
+        this.rect.h = this.scaleY;
+        
+        return this.rect;
+    };
+    
+    this.collidesWithRect = function(rect2)
+    {
+        var rect1 = this.getRect();
+        console.log(rect2.w);
+        //simple AABB (Axis-Aligned Bounding Box)
+        //REF. Mozilla Developer / Game Techniques
+        
+        if (rect1.x < rect2.x + rect2.w &&
+        rect1.x + rect1.w > rect2.x &&
+        rect1.y < rect2.y + rect2.h)
+        {
+            console.log("true");
+            return true;
+        }
+        
+        return false;
     };
 }

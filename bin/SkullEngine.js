@@ -96,6 +96,14 @@ function alignX(presetPos, screenWidth)
     }
 }
 
+//Random number generator helper
+//random int between min and max (including max)
+//REF. Mozilla
+var getRandom = function(min, max)
+{
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
 function SkullSprite(path, posX, posY, scaleX, scaleY)
 {
     this.path = path || "";
@@ -109,6 +117,8 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     
     this.scaleX;
     this.scaleY;
+    
+    this.rect = {x : 0, y : 0, w : 0, h : 0};
     
     this.tmpScaleX = scaleX;
     this.tmpScaleY = scaleY;
@@ -125,7 +135,8 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
     
     this.sprite.onload = function ()
     {
-        
+        self.scaleX = self.sprite.width;
+        self.scaleY = self.sprite.height;
     };
     
     this.sprite.src = this.path;
@@ -207,6 +218,8 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
             
             self.scaleX = scaleX;
         }
+        
+        self.scaleX = scaleX;
     };
     
     this.setScaleY = function(scaleY, auto)
@@ -226,6 +239,8 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
             
             self.scaleY = scaleY;
         }
+        
+        self.scaleY = scaleY;
     };
     
     this.setScale = function(scaleX, scaleY)
@@ -235,6 +250,9 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
             self.scaleX = scaleX;
             self.scaleY = scaleY;
         }
+        
+        self.scaleX = scaleX;
+        self.scaleY = scaleY;
     };
     
     this.getPath = function()
@@ -279,6 +297,35 @@ function SkullSprite(path, posX, posY, scaleX, scaleY)
         {
             return this.sprite.height;
         }
+    };
+    
+    this.getRect = function()
+    {
+        this.rect.x = this.positionX;
+        this.rect.y = this.positionY;
+        this.rect.w = this.scaleX;
+        this.rect.h = this.scaleY;
+        
+        return this.rect;
+    };
+    
+    //only for anchor point 0.5
+    this.collidesWithRect = function(rect2)
+    {
+        var rect1 = this.getRect();
+        //simple AABB (Axis-Aligned Bounding Box)
+        //REF. Mozilla Developer / Game Techniques
+        
+        if (rect1.x < rect2.x + rect2.w &&
+        rect1.x + rect1.w > rect2.x &&
+        rect1.y < rect2.y + rect2.h &&
+        rect1.h + rect1.y > rect2.y)
+        {
+            console.log("true");
+            return true;
+        }
+        
+        return false;
     };
 }
 

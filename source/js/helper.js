@@ -60,3 +60,11 @@ function alignX(presetPos, screenWidth)
             break;
     }
 }
+
+//Random number generator helper
+//random int between min and max (including max)
+//REF. Mozilla
+var getRandom = function(min, max)
+{
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}

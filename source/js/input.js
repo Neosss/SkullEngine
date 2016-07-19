@@ -3,6 +3,8 @@ function Input()
 	this.pressedKeys = [];
 	
     var self = this;
+    this.x = 0;
+    this,y = 0;
     
 	this.keycode =
 	{
@@ -36,4 +38,20 @@ function Input()
 	{
 		self.pressedKeys[e.keyCode] = false;
 	};
+    
+    this.addMouseEvents = function()
+    {
+        document.addEventListener("mousedown", this.mouseDownHandler, false);
+    };
+    
+    this.mouseDownHandler = function(e)
+    {
+        
+    };
+    
+    this.addEvents = function()
+    {
+        this.addMouseEvents();
+        this.addKeyboardEvents();
+    };
 }
