@@ -81,7 +81,7 @@ p2ScoreText.fontHeight = 30;
 p2ScoreText.setLines(game);
 pongScene.addChild(p2ScoreText);
 
-var tmpText = "レベル:" + p1Level.toString();
+var tmpText = "Lv:" + p1Level.toString();
 var p1LevelText = new SkullText(tmpText, 30);
 p1LevelText.setPosition(60, game.height - 50);
 p1LevelText.setColor(255, 255, 255);
@@ -90,7 +90,7 @@ p1LevelText.fontHeight = 30;
 p1LevelText.setLines(game);
 pongScene.addChild(p1LevelText);
 
-tmpText = "レベル:" + p2Level.toString();
+tmpText = "Lv:" + p2Level.toString();
 var p2LevelText = new SkullText(tmpText, 30);
 p2LevelText.setPosition(game.width - 150, game.height - 50);
 p2LevelText.setColor(255, 255, 255);
@@ -116,13 +116,16 @@ var superTimer = 0;
 var delayTimer = 0;
 var ballMiddle = true;
 var superDuration = 80;
+var gravityX = 0;
+var timeDelationCounterP1 = 0;
+var timeDelationCounterP2 = 0;
 
-var powerUpList = ["images/pong/longPU.png", "images/pong/speedPU.png", "images/pong/superPU.png"];
+var powerUpList = ["images/pong/longPU.png", "images/pong/speedPU.png", "images/pong/superPU.png", "images/pong/timePU.png", "images/pong/gravityPU.png"];
 
 var createPowerUp = function()
 {
     isPU = true;
-    actPowerUpNum = getRandom(0, 2);
+    actPowerUpNum = getRandom(0, 4);
     actPowerUp = new SkullSprite(powerUpList[actPowerUpNum]);
     actPowerUp.setAnchorPoint(0.5, 0.5);
     actPowerUp.setPosition(game.width/2, 35);
@@ -147,20 +150,32 @@ var applyEffect = function(playerNum)
         {
             paddleP1.setScaleY(paddleP1.getScaleY() + 20);
             p1Level++;
-            p1LevelText.resetText("レベル:" + p1Level.toString(), game);
+            p1LevelText.resetText("Lv:" + p1Level.toString(), game);
         }
         //1 = speed up
         else if(actPowerUpNum == 1)
         {
             paddleSpeedP1 += 3;
             p1Level++;
-            p1LevelText.resetText("レベル:" + p1Level.toString(), game);
+            p1LevelText.resetText("Lv:" + p1Level.toString(), game);
         }
         //2 = super power
         else if(actPowerUpNum == 2)
         {
             isSuperActiveP1 = true;
             superTimer = 0;
+        }
+        //3 = time delation
+        else if(actPowerUpNum == 3)
+        {
+            paddleSpeedP2 -= (1 + (1 * (p2Level / 2)));
+            paddleP2.setScaleY(paddleP2.getScaleY() - 20);
+            timeDelationCounterP2++;
+        }
+        //4 = gravity control
+        else if(actPowerUpNum == 4)
+        {
+            gravityX += 2;
         }
     }
     
@@ -172,14 +187,14 @@ var applyEffect = function(playerNum)
         {
             paddleP2.setScaleY(paddleP1.getScaleY() + 20);
             p2Level++;
-            p2LevelText.resetText("レベル:" + p2Level.toString(), game);
+            p2LevelText.resetText("Lv:" + p2Level.toString(), game);
         }
         //1 = speed up
         else if(actPowerUpNum == 1)
         {
             paddleSpeedP2 += 3;
             p2Level++;
-            p2LevelText.resetText("レベル:" + p2Level.toString(), game);
+            p2LevelText.resetText("Lv:" + p2Level.toString(), game);
         }
         //2 = super power
         else if(actPowerUpNum == 2)
@@ -187,7 +202,44 @@ var applyEffect = function(playerNum)
             isSuperActiveP2 = true;
             superTimer = 0;
         }
+        
+        //3 = time delation
+        else if(actPowerUpNum == 3)
+        {
+            paddleSpeedP1 -= (1 + (1 * (p1Level / 2)));
+            paddleP1.setScaleY(paddleP1.getScaleY() - 20);
+            timeDelationCounterP1++;
+        }
+        //4 = gravity control
+        else if(actPowerUpNum == 4)
+        {
+            gravityX -= 2;
+        }
+        
     }
+}
+
+var afterPointReset = function()
+{
+    for(var i = 0; i < timeDelationCounterP1; i++)
+    {
+        paddleSpeedP1 += (1 + (1 * (p1Level / 2)));
+        paddleP1.setScaleY(paddleP1.getScaleY() + 20);
+    }
+    
+    for(var i = 0; i < timeDelationCounterP2; i++)
+    {
+        paddleSpeedP2 += (1 + (1 * (p2Level / 2)));
+        paddleP2.setScaleY(paddleP2.getScaleY() + 20);
+    }
+    
+    if(gravityX > 0)
+        gravityX--;
+    else if(gravityX < 0)
+        gravityX++;
+    
+    timeDelationCounterP1 = 0;
+    timeDelationCounterP2 = 0;
 }
 
 game.update = function()
@@ -264,8 +316,16 @@ game.update = function()
         }
 
         //ball movement update
-        ball.setPositionX(ball.getPositionX() + ballSpeedX);
-        ball.setPositionY(ball.getPositionY() + ballSpeedY);
+        ball.setPositionX(ball.getPositionX() + ballSpeedX + gravityX);
+        if(ballSpeedY > 0)
+        {
+            ball.setPositionY(ball.getPositionY() + ballSpeedY + gravityX);
+        }
+        else
+        {
+            ball.setPositionY(ball.getPositionY() + ballSpeedY - gravityX);
+        }
+        
 
         if(ball.getPositionX() >= game.width)
         {
@@ -290,6 +350,7 @@ game.update = function()
             ballSpeedX *= -1;
             baseBallSpeed = 6;
             
+            afterPointReset();
         }
         else if(ball.getPositionX() <= 0)
         {
@@ -313,6 +374,8 @@ game.update = function()
             p2ScoreText.resetText(p2Score.toString(), game);
             ballSpeedX *= -1;
             baseBallSpeed = 6;
+            
+            afterPointReset();
         }
 
         if(ball.getPositionY() >= game.height)
